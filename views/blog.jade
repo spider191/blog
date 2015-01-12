@@ -1,0 +1,108 @@
+extends layout
+
+block content
+  +nav(2)
+  .container
+    -if(word)
+      .page-header
+        h1.blog #{word.title}
+        h4.blog #{word.small}
+        span #{word.time}
+        span  #{word.fenlei}
+      .row
+        .col-md-8
+          .words !{word.words}
+          .com
+            form(role='form')
+              input(type='hidden', name='id', value=word._id)
+              .row
+                .col-lg-12
+                  .input-group
+                    span.input-group-addon 留言
+                    input.form-control(type='text' name='comment')
+                    span.input-group-btn
+                      button.btn.btn-primary(type='button' onclick='cment()') 确定
+              .row.info
+                .col-lg-6
+                  .input-group.input-group-sm
+                    span.input-group-addon 称呼
+                    input.form-control(type='text' placeholder='您的称呼' name='name')
+                .col-lg-6
+                  .input-group.input-group-sm
+                    span.input-group-addon 邮箱
+                    input.form-control(type='text' placeholder='sample@zhiyun.me(将被保密)' name='emall')
+          ul.list-unstyled.comments
+            -for(var i=word.comments.length-1;i>=0;i--)
+              -if(word.comments[i].show)
+                li
+                  span=word.comments[i].name+':'
+                  span.num=i+1+"#"
+                  span.time=word.comments[i].time
+                  p=word.comments[i].comment
+        .col-md-3.col-md-offset-1.bloglist
+          ul.list-unstyled
+            -var ln=2
+            -for(var i=0;i<blist.length;i++)
+              -if(word.time == blist[i].time)
+                -i-=ln
+                -if(i<0) i=0
+                -else if(i+2*ln>=blist.length) i=blist.length-2*ln-1
+                -for(var j=i;j<=(i+2*ln>=blist.length?blist.length-1:i+2*ln);j++)
+                  li&attributes({'class': word.time == blist[j].time?'selected':''})
+                    a(href='blog?id=' + blist[j]._id) #{blist[j].title}
+                    small  #{blist[j].small}
+                -break
+    -else
+      .jumbotron.blog
+        h1 博客
+        p blog...
+      .row
+        .col-md-6.blog
+          .tab-content
+            -var p=3
+            -var j=1
+            -var ini='in'
+            -var b='active'
+            -for(var i=0;i<blist.length;i+=p)
+              .tab-pane.fade(role='tabpanel' id=j)&attributes({'class': ini+' '+b})
+                ul.list-unstyled
+                  -j++
+                  -b=''
+                  -ini=''
+                  -if(i+p>blist.length)
+                    -var m=blist.length
+                  -else
+                    -var m=i+p
+                  -for(var k=i;k<m;k++)
+                    li
+                      h4
+                        a(href='blog?id=' + blist[k]._id) #{blist[k].title}
+                        small  #{blist[k].small}
+                      span.fl  #{blist[k].fenlei}
+                      span #{blist[k].time}
+
+      nav
+        ul.pagination#myTab(role='tablist')
+          -b='active';
+          -for(var i=1;i<j;i++)
+            li(role='presentation')&attributes({'class': b})
+              a(href='#'+i role="tab" data-toggle="tab") #{i}
+            -b=''
+  include foot
+  script.
+    $('.info').hide();
+    $('form').on("focusin", function () {
+      $('.info').show("slow");
+    });
+    $('body').on("mouseup", function () {
+      if(!$('input[name="comment"], input[name="name"], input[name="emall"], button.btn-primary').is(':focus')) {
+        $('.info').hide("slow");
+      }
+    });
+    function cment() {
+      $.post("/blog", $('form').serialize(), function(data) {
+        $('.comments').prepend(data);
+        $('.comments :first').hide();
+        $('.comments :first').slideDown("slow");
+      });
+    }

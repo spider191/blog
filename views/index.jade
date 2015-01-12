@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  +nav(0)
+  .container
+    .jumbotron.index
+      h1 ZhiYun.me
+      p 欢迎访问！
+      p 这是一个以游戏为主题的个人网站。
+    .row
+      .col-md-5
+        .page-header
+          h2 游戏
+        .panel.panel-default
+          .panel-heading
+            h3.panel-title COMING SOON...
+          .panel-body
+            p 第一个游戏努力酝酿中。。。
+      .col-md-6.col-md-offset-1.bloglist
+        .page-header
+          h2 博客
+        ul.list-unstyled
+          - each obj in blist
+            li
+              a(href='blog?id=' + obj._id) #{obj.title}
+              small  #{obj.small}
+
+  include foot

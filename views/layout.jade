@@ -1,0 +1,31 @@
+doctype html
+html(lan='zh-cn')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title= title
+    link(href='/stylesheets/bootstrap.min.css' rel='stylesheet')
+    link(href='/stylesheets/style.css' rel='stylesheet')
+  body
+    mixin nav(int)
+      nav.navbar.navbar-default.navbar-static-top(role='navigation')
+        .container
+          .navbar-header
+            button(type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar')
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href='/') ZhiYun.me
+          #navbar.collapse.navbar-collapse
+            ul.nav.navbar-nav
+              -var nlist = ["首页","/","博客","blog","关于","about"];
+              -for(var i = 0; i < nlist.length; i+=2)
+                -if(int == i)
+                  li.active
+                    a(href=nlist[i + 1]) #{nlist[i]}
+                -else
+                  li
+                    a(href=nlist[i+1]) #{nlist[i]}
+    block content

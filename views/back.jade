@@ -1,0 +1,90 @@
+doctype html
+html(lan='zh-cn')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title= title
+    link(href='/stylesheets/bootstrap.min.css' rel='stylesheet')
+    link(href='/stylesheets/back.css' rel='stylesheet')
+  body
+    nav.navbar.navbar-inverse.navbar-static-top(role='navigation')
+      .container
+        .navbar-header
+          button(type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/back') ZhiYun.me
+        #navbar.collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/back') 内容管理
+            li
+              a(href='/edit') 添加博客
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href='/' target='_blank') 首页
+            li
+              a(href='/logout') 登出
+    .container
+      .row
+        .col-md-4
+          h2= '文章列表'
+          ul
+            - each obj in blist
+              li
+                a(href='?id=' + obj._id) #{obj.title}
+                span #{obj.fenlei}
+                span #{obj.time}
+        .col-md-4
+          -if(word.time)
+            h2 #{word.title}
+            span 时间：
+            span #{word.time}
+            span  分类：
+            span #{word.fenlei}
+            div !{word.words}
+            a.btn.btn-primary(href='edit?id=' + word._id) 修改
+            a.btn.btn-danger(href='?de=' + word._id, onclick='javascript:return p_del(\'#{word.title}\')') 删除
+          -else
+            h2 博客内容管理
+        .col-md-4
+          h2 评论
+          ul.list-unstyled.comm
+            -if(word.comments)
+              -for(var i=word.comments.length-1;i>=0;i--)
+                li&attributes({'class': word.comments[i].show?'show':'hided'},{'class': i+1})
+                  span=word.comments[i].name+'('+word.comments[i].emall+')'
+                  span.num=i+1+"#"
+                  span.time=word.comments[i].time
+                  p=word.comments[i].comment
+                  -if(word.comments[i].show)
+                    button.btn.btn-info.btn-xs&attributes({'class': i+1})(type='button' onclick='javascript:hide(#{word.comments[i].show},"#{word._id}","#{i}")') 隐藏
+                  -else
+                    button.btn.btn-danger.btn-xs&attributes({'class': i+1})(type='button' onclick='javascript:hide(#{word.comments[i].show},"#{word._id}","#{i}")') 显示
+
+    script(src='/javascripts/jquery.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+    script.
+      function p_del(tit) {
+        var msg = "确定要删除 " + tit + " 吗？\n\n请确认！";
+        return confirm(msg);
+      }
+      function hide(b, id, num) {
+        var bo=b?"&hide=":"&show=";
+        $.get("/back?id="+id+bo+num, function (data) {
+          if(data=="done") {
+            $('li.' + (Number(num) + 1)).toggleClass("hided");
+            $('li.' + (Number(num) + 1)).toggleClass("show");
+            $('button.' + (Number(num) + 1)).toggleClass("btn-info");
+            $('button.' + (Number(num) + 1)).toggleClass("btn-danger");
+            if (b) {
+              $('button.' + (Number(num) + 1)).html("显示");
+            }else{
+              $('button.' + (Number(num) + 1)).html("隐藏");
+            }
+          }
+        });
+      }

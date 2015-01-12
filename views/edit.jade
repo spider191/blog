@@ -1,0 +1,27 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/ckeditor/ckeditor.js')
+  body
+    h1= title
+    a(href='/back') 返回
+    form(name= 'for', action= '/back', method= 'post')
+      -if(word.time)
+        span 时间：#{word.time}
+        //span 已读：#{word.readed}
+        input(type='hidden', name='id', value=word._id)
+      p= '标题:'
+      input(type='text', name='tit', value=word.title)
+      p= '小标题:'
+      input(type='text', name='sma', value=word.small)
+      p= '分类:'
+      input(type='text', name='cla', value=word.fenlei)
+      textarea(name= 'edi',class= 'edi', rows= '10',cols= '80') !{word.words}
+      script.
+        CKEDITOR.replace( 'edi' );
+      input(type='submit', value=title)
